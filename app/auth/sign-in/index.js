@@ -72,7 +72,7 @@ export default function SignIn() {
             }}
             style={styles.buttonContainer}
           >
-            <Text style={styles.buttonTextCreate}>Register Academy Account</Text>
+            <Text style={styles.buttonTextCreate}>For Academy Account</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
