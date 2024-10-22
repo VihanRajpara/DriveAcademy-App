@@ -7,6 +7,7 @@ const { width, height } = Dimensions.get("window");
 
 export default function Login() {
   const router = useRouter();
+   
   const [imagesLoaded, setImagesLoaded] = useState(true);
   const images = [
     require("../assets/images/three.jpeg"), 
@@ -40,6 +41,7 @@ export default function Login() {
   
   return (
     <View>
+      {/* {isLoggedIn && router.push('/home')} */}
       <View
         style={{
           width: "100%",

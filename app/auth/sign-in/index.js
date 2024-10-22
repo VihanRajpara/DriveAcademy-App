@@ -1,19 +1,35 @@
 import { TouchableOpacity, StyleSheet, View, Text, TextInput, ScrollView, SafeAreaView } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { useNavigation } from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
 import { Colors } from "../../../constants/Colors";
 import { useRouter } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess, loginFailure } from "../../../redux/authSlice";
 
 export default function SignIn() {
   const navigation = useNavigation();
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { isLoggedIn, errorMessage } = useSelector((state) => state.auth);
+
+  const [userCode, setUserCode] = useState("");
+  const [password, setPassword] = useState("");
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false, // Hide the header
     });
   }, [navigation]);
+
+  const handleSignIn = () => {
+    if (userCode === "123456" && password === "123") {
+      dispatch(loginSuccess({ userCode, password }));
+      router.push("home");
+    } else {
+      dispatch(loginFailure("Invalid email or password"));
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.WHITE }}>
@@ -32,40 +48,54 @@ export default function SignIn() {
           <Text style={{ fontFamily: "outfit", fontSize: 25, color: Colors.BLUE, marginBottom: 10 }}>You've been missed!</Text>
 
           <View style={styles.inputContainer}>
-            <Text style={{ fontFamily: "outfit", fontSize: 18 }}>Email</Text>
+            <Text style={{ fontFamily: "outfit", fontSize: 18 }}>User Code</Text>
             <TextInput
               style={styles.input}
-              placeholder="hello@company.com"
+              placeholder="Enter 6-digit code"
+              value={userCode} // Change from email to userCode
+              onChangeText={(text) => setUserCode(text.toUpperCase())} // Update the state to handle user code
+              maxLength={6} // Limit the input to 6 digits
+              autoCapitalize="characters" // No automatic capitalization
               onFocus={(e) => e.target.setNativeProps({ style: { borderColor: Colors.BLUE } })}
-              onBlur={(e) => e.target.setNativeProps({ style: { borderColor: Colors.GRAY} })}
+              onBlur={(e) => e.target.setNativeProps({ style: { borderColor: Colors.GRAY } })}
             />
           </View>
 
+          {/* Password Input */}
           <View style={styles.inputContainer}>
             <Text style={{ fontFamily: "outfit", fontSize: 18 }}>Password</Text>
             <TextInput
               secureTextEntry={true}
               style={styles.input}
               placeholder="Your Password"
-              onFocus={(e) => e.target.setNativeProps({ style: { borderColor: Colors.BLUE} })}
-              onBlur={(e) => e.target.setNativeProps({ style: { borderColor: Colors.GRAY} })}
+              value={password}
+              onChangeText={setPassword} // Set password state
+              onFocus={(e) => e.target.setNativeProps({ style: { borderColor: Colors.BLUE } })}
+              onBlur={(e) => e.target.setNativeProps({ style: { borderColor: Colors.GRAY } })}
             />
           </View>
 
+          {/* Error Message */}
+          {errorMessage && <Text style={{ color: "red", marginTop: 10 }}>{errorMessage}</Text>}
+
+          {/* Forgot Password */}
           <View style={styles.forgotPasswordContainer}>
             <Text style={{ fontFamily: "outfit", fontSize: 18, color: Colors.BLUE }}>Forgot Password?</Text>
           </View>
 
-          <TouchableOpacity style={styles.buttonContainer}>
+          {/* Sign In Button */}
+          <TouchableOpacity style={styles.buttonContainer} onPress={handleSignIn}>
             <Text style={styles.buttonTextSignin}>Sign In</Text>
           </TouchableOpacity>
 
+          {/* OR Divider */}
           <View style={styles.orContainer}>
             <View style={styles.line} />
             <Text style={styles.orText}>OR</Text>
             <View style={styles.line} />
           </View>
 
+          {/* Sign Up Link */}
           <TouchableOpacity
             onPress={() => {
               router.push("auth/sign-up");
@@ -81,6 +111,26 @@ export default function SignIn() {
 }
 
 const styles = StyleSheet.create({
+  label: {
+    fontFamily: "outfit",
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  inputRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  inputBox: {
+    width: 40,
+    height: 50,
+    borderWidth: 1,
+    borderColor: Colors.GRAY,
+    textAlign: "center",
+    fontSize: 18,
+    fontFamily: "outfit",
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
   input: {
     fontSize: 16,
     color: Colors.PRIMARY,
