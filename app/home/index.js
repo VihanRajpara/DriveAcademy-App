@@ -37,7 +37,7 @@ const Home = () => {
       {user && (
         <>
           <Text style={styles.welcomeText}>
-            Logged in as: {user.userCode} & {user.password}
+            Logged in as: {user.email} & {user.message}
           </Text>
           <Button title="Logout" onPress={handleLogout} />
         </>

@@ -16,6 +16,7 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.errorMessage = null;
       AsyncStorage.setItem('isLoggedIn', 'true');
+      AsyncStorage.setItem('token',`Vihan ${action.payload.token}`)
     },
     loginFailure: (state, action) => {
       state.isLoggedIn = false;
@@ -27,6 +28,7 @@ export const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
       AsyncStorage.removeItem('isLoggedIn');
+      AsyncStorage.removeItem('token');
     },
   },
 });

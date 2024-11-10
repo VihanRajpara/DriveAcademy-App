@@ -6,6 +6,7 @@ import { Colors } from "../../../constants/Colors";
 import { useRouter } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess, loginFailure } from "../../../redux/authSlice";
+import axiosInstance from "../../../axiosInstance";
 
 export default function SignIn() {
   const navigation = useNavigation();
@@ -22,12 +23,27 @@ export default function SignIn() {
     });
   }, [navigation]);
 
-  const handleSignIn = () => {
-    if (userCode === "123456" && password === "123") {
-      dispatch(loginSuccess({ userCode, password }));
-      router.push("home");
-    } else {
-      dispatch(loginFailure("Invalid email or password"));
+  const handleSignIn = async () => {
+    if (!userCode || !password) {
+      dispatch(loginFailure("User code and password are required"));
+      return;
+    }
+    try {
+      const response = await axiosInstance.post('/auth/user/login', {
+        userCode,
+        password,
+      });
+      dispatch(loginSuccess(response.data));
+      router.push("/home");
+    } catch (error) {
+      if (error.response) {
+        dispatch(loginFailure(error.response.data.message || "Login failed"));
+      } else if (error.request) {
+        dispatch(loginFailure("No response from the server. Please try again."));
+      } else {
+        dispatch(loginFailure("An error occurred. Please try again."));
+      }
+      console.error("Login error:", error);
     }
   };
 
